@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Debug C++",
+            "type": "cppdbg",
+            "request": "launch",
+            // 指向你编译好的可执行文件：
+            "program": "${workspaceFolder}/main",        
+            "args": [],                     // 运行时参数
+            "stopAtEntry": false,          // 是否在 main() 入口处停下
+            "cwd": "${workspaceFolder}",    // 调试时的工作目录
+            "environment": [],              // 环境变量
+            "externalConsole": false,       // 使用集成终端还是外部终端
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Use Intel disassembly flavor",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            // 可选：先自动编译再启动调试（需配合 tasks.json）
+            "preLaunchTask": "build-myapp"
+        }
+    ]
+}
