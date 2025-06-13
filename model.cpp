@@ -40,6 +40,7 @@ Model::Model(const char* filename)
         {
             std::vector<Vector3f> verts_face(3);
             std::vector<Vector3f> texcoords_face(3);
+            std::vector<Vector3f> normalcoords_face(3);
             int itrash,idx;
             iss >> trash;
             std::vector<Vector3i> f;
@@ -52,13 +53,13 @@ Model::Model(const char* filename)
             for(int i=0;i<3;++i)
             {
                 verts_face[i]=vert(f[i][0]);
-                verts_face[i].print();
                 texcoords_face[i]=texcoord(f[i][1]);
             }
             Triangle tri(verts_face);
             tri.setUVcoords(texcoords_face);
             tri.diffuse_map = &diffuseMap;
             tri.normal_map = &normalMap;
+            tri.spec_map = &specMap;
             faces_.push_back(tri);    
         }
         else if(!line.compare(0,3,"vt "))

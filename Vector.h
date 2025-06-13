@@ -55,6 +55,11 @@ public:
         z = z/_norm;
     }
 
+    inline Vector3<t> cwise(Vector3<t> other)
+    {
+        return Vector3<t>(x * other.x , y * other.y , z * other.z);
+    }
+
     inline void print(){ std::cout<<x<<" "<<y<<" "<<z<<std::endl; }
 
 };
@@ -79,10 +84,10 @@ public:
         else if(idx==2) return z;
         else return w;
     }
-    inline Vector4<t> operator -(Vector4<t> &other){return Vector4<t>(x-other.x,y-other.y,z-other.z,w-other.w);}
-    inline Vector4<t> operator +(Vector4<t> &other){return Vector4<t>(x+other.x,y+other.y,z+other.z,w+other.w);}
-    inline Vector4<t> operator *(t other){return Vector4<t>(x*other,y*other,z*other,w*other);}
-    inline Vector4<t> operator /(t other){return Vector4<t>(x/other,y/other,z/other,w/other);}
+    inline Vector4<t> operator -(const Vector4<t> &other){return Vector4<t>(x-other.x,y-other.y,z-other.z,w-other.w);}
+    inline Vector4<t> operator +(const Vector4<t> &other){return Vector4<t>(x+other.x,y+other.y,z+other.z,w+other.w);}
+    inline Vector4<t> operator *(const t other){return Vector4<t>(x*other,y*other,z*other,w*other);}
+    inline Vector4<t> operator /(const t other){return Vector4<t>(x/other,y/other,z/other,w/other);}
     inline float norm2() {
         return x*x+y*y+z*z+w*w;
     }

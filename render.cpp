@@ -96,14 +96,7 @@ void Render::drawLine(const Vector2i& p0,const Vector2i& p1,TGAImage& image,TGAC
         } 
     } 
 }
-void Render::drawModel(Model* model)
-{
-    for (auto& face : model->faces_) {
-        face.setColor(TGAColor(rand()%255, rand()%255, rand()%255, 255));
-        drawTriangle(face);
-    }
-}
-void Render::drawTriangle(Triangle& triangle)
+void Render::drawTriangle(Triangle& triangle,Scene& scene,std::vector<Vector4f>& worldpos)
 {
     int maxidx = zBuffer.size();
     int minx=std::min(triangle.v_homogeneous[0].x,std::min(triangle.v_homogeneous[1].x,triangle.v_homogeneous[2].x));
@@ -127,11 +120,26 @@ void Render::drawTriangle(Triangle& triangle)
                 
                 if(idx>=0&&idx<maxidx&&zBuffer[idx]<z)
                 {
+                    TGAColor color(255,255,255,255);
+                    
                     Vector3f texcoord = (triangle.uv_coords[0]*alpha/triangle.v_homogeneous[0].w+
                                         triangle.uv_coords[1]*beta/triangle.v_homogeneous[1].w+
                                         gamma*triangle.uv_coords[2]/triangle.v_homogeneous[0].w)*Z;
+                    auto shadingcoord = ((worldpos[0]*alpha/triangle.v_homogeneous[0].w) +
+                                         (worldpos[1] * beta /triangle.v_homogeneous[1].w) +
+                                         (worldpos[2] * gamma /triangle.v_homogeneous[0].w))*Z;
+                    Vector3f frag_pos(shadingcoord[0],shadingcoord[1],shadingcoord[2]);
+
+                    ShadingPixel pix(
+                        texcoord,
+                        frag_pos,
+                        scene.camera.pos,
+                        &triangle,
+                        scene.Lights
+                    );
                     zBuffer[idx]=z;
-                    image.set(i,j,triangle.getColor(texcoord));
+                    shader->fragment_prosess(pix,color);
+                    image.set(i,j,color);
                 }
             }
         }
@@ -140,17 +148,16 @@ void Render::drawTriangle(Triangle& triangle)
 void Render::renderScene(Scene& scene)
 {
     Matrix4f trans_matrix = getProjectionMatrix(scene.camera)*getViewMatrix(scene.camera);
-    trans_matrix.print(); 
-    for(auto& light : scene.Lights)
+    for(auto& model : scene.models)
     {
-        for(auto& model : scene.models)
+        Matrix4f model_matrix = getModelMatrix(model);
+        trans_matrix = trans_matrix*model_matrix;
+        for(auto& face : model->faces_)
         {
-            trans_matrix = trans_matrix*getModelMatrix(model);
-            for(auto& face : model->faces_)
-            {
-                shader->vert_prosess(trans_matrix,face);
-                drawTriangle(face);
-            }
+            std::vector<Vector4f> worldpos(3);
+            for(int i=0;i<3;++i) worldpos[i]=model_matrix*face.v_homogeneous[i];
+            shader->vert_prosess(trans_matrix,face);
+            drawTriangle(face,scene,worldpos);
         }
     }
 }

@@ -7,23 +7,32 @@
 #include "Matrix.h"
 #include "Vector.h"
 #include "light.h"
+#include  <iostream>
 
 enum class shader_type
 {
    Phong_Shading
 };
 
-typedef struct
+struct ShadingPixel
 {
     Vector3f& tex_coord;
-    Vector3f& normal_coord;
     Vector3f& frag_pos;
     Vector3f& eye_pos;
 
     Triangle* obj;
-    Light* lights;
+    std::vector<Light>& lights;
+    ShadingPixel(Vector3f& tex_coord_,Vector3f& frag_pos_,
+    Vector3f& eye_pos_,Triangle* obj_,std::vector<Light>& lights_):
+    tex_coord(tex_coord_),
+    frag_pos(frag_pos_),
+    eye_pos(eye_pos_),
+    obj(obj_),
+    lights(lights_)
+    {
 
-} ShadingPixel;
+    };
+} ;
 
 class Shader
 {
@@ -38,11 +47,9 @@ public:
     {
         for(auto& vert : tri.v_homogeneous){
             vert=mat*vert;
-            vert.print();
             vert[0]=vert[0]/vert[3];
             vert[1]=vert[1]/vert[3];
             vert[2]=vert[2]/vert[3];
-            //vert.print();
         }
     } 
     virtual bool vert_prosess(Matrix4f&,Triangle&) = 0;

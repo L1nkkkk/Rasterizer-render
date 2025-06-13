@@ -45,8 +45,7 @@ public:
     void drawLine(Vector2i& p0,Vector2i& p1,TGAImage& image,TGAColor color);
     void drawLine(Vector2f& p0,Vector2f& p1,TGAImage& image,TGAColor color);
     void drawLine(const Vector2i& p0,const Vector2i& p1,TGAImage& image,TGAColor color);
-    void drawModel(Model* model);
-    void drawTriangle(Triangle& triangle);
+    void drawTriangle(Triangle& triangle,Scene& scene,std::vector<Vector4f>& worldpos);
     void renderScene(Scene& scene);
     int getIndexBy2D(int x,int y) {return y*width+x;}
 

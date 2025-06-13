@@ -7,11 +7,11 @@
 class Light
 {
 public:
-    Vector3f dir;
-    float intensity;
+    Vector3f pos;
+    Vector3f intensity;
 public:
-    Light():dir(Vector3f()),intensity(0){}
-    Light(Vector3f d,float i):dir(d),intensity(i){}
+    Light():pos(Vector3f()),intensity(0){}
+    Light(Vector3f d,Vector3f i):pos(d),intensity(i){}
     ~Light(){};
 };
 
