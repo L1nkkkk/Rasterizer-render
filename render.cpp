@@ -106,10 +106,10 @@ void Render::drawModel(Model* model)
 void Render::drawTriangle(Triangle& triangle)
 {
     int maxidx = zBuffer.size();
-    int minx=std::min(triangle[0].x,std::min(triangle[1].x,triangle[2].x));
-    int maxx=std::max(triangle[0].x,std::max(triangle[1].x,triangle[2].x));
-    int miny=std::min(triangle[0].y,std::min(triangle[1].y,triangle[2].y));
-    int maxy=std::max(triangle[0].y,std::max(triangle[1].y,triangle[2].y));
+    int minx=std::min(triangle.v_homogeneous[0].x,std::min(triangle.v_homogeneous[1].x,triangle.v_homogeneous[2].x));
+    int maxx=std::max(triangle.v_homogeneous[0].x,std::max(triangle.v_homogeneous[1].x,triangle.v_homogeneous[2].x));
+    int miny=std::min(triangle.v_homogeneous[0].y,std::min(triangle.v_homogeneous[1].y,triangle.v_homogeneous[2].y));
+    int maxy=std::max(triangle.v_homogeneous[0].y,std::max(triangle.v_homogeneous[1].y,triangle.v_homogeneous[2].y));
     //std::cout<<minx<<" "<<triangle[0].z<<" "<<triangle[1].z<<" "<<triangle[2].z<<std::endl;
     for(int i=minx;i<=maxx;++i)
     {

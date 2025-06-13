@@ -7,7 +7,7 @@ bool PhongShader::vert_prosess(Matrix4f& mvp,Triangle& tri)
     return true;
 }
 
-bool PhongShader::fragment_prosess(Triangle& tri,TGAColor& color)
+bool PhongShader::fragment_prosess(ShadingPixel pix,TGAColor& color)
 {
     return true;
 }

@@ -14,14 +14,14 @@ private:
     
 public:
     std::vector<Vector3f> verts_;
-    std::vector<Vector2i> screen_coords;
+    std::vector<Vector3f> screen_coords;
     std::vector<Vector3f> uv_coords;
     std::vector<Vector4f> v_homogeneous;
     TGAImage* diffuse_map;
     TGAImage* normal_map;
     Vector3f normal;
 
-    Triangle() : verts_(3,Vector3f(0)),screen_coords(3,Vector2i(0)),uv_coords(3,Vector3f(0)),v_homogeneous(3,Vector4f(0)){};
+    Triangle() : verts_(3,Vector3f(0)),screen_coords(3,Vector3f(0)),uv_coords(3,Vector3f(0)),v_homogeneous(3,Vector4f(0)){};
     Triangle(std::vector<Vector3f> verts) : verts_(3),screen_coords(3),uv_coords(3),v_homogeneous(3){
         if(verts.size()!=3) return;
         v_homogeneous[0]=Vector4f(verts_[0] = verts[0]);
@@ -41,7 +41,6 @@ public:
     bool isInside(const Vector2i& pos) const;
     void setColor(TGAColor c) {color=c;}
     inline Vector3f& operator[] (int idx) { return verts_[idx];}
-    void world2Screen(int width,int height);
 
     void setUVcoords(std::vector<Vector3f> uv_coords_){
         if(uv_coords_.size()!=3) return;
@@ -62,11 +61,29 @@ public:
         float fy = texcoords[1] * (height - 1);
 
         // 2. 根据你的 UV 原点约定做翻转（这里假设 v=0 在底部）：
-        int px = int(fx + 0.5f);
-        int py = int(fy+ 0.5f);
-        return diffuse_map->get(px,py);
+        return bilinearInterplate(*diffuse_map,fx,fy);
     }
     
+    inline TGAColor Interplate(TGAColor p0,TGAColor p1,float t)
+    {
+        return TGAColor(
+            ((float)p0.r*(1.-t)+(float)p1.r*t),
+            ((float)p0.g*(1.-t)+(float)p1.g*t),
+            ((float)p0.b*(1.-t)+(float)p1.b*t),
+            ((float)p0.a*(1.-t)+(float)p1.a*t)
+        );
+    }
+
+    inline TGAColor bilinearInterplate(TGAImage& img,float u,float v)
+    {
+        TGAColor p0 = img.get((int)u,(int)v);
+        TGAColor p1 = img.get((int)u,(int)v+1);
+        TGAColor p2 = img.get((int)u+1,(int)v);
+        TGAColor p3 = img.get((int)u+1,(int)v+1);
+        float s = ((int)v)+1-v;
+        float t = ((int)u)+1-u;
+        return Interplate(Interplate(p0,p1,s),Interplate(p2,p3,s),t);
+    } 
 };
 
 
