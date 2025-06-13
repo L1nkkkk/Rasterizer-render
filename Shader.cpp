@@ -1,6 +1,13 @@
 #include "Shader.h"
+//Phong Shading
+bool PhongShader::vert_prosess(Matrix4f& mvp,Triangle& tri)
+{
+    transVerts(mvp,tri);
+    transVerts(viewprot_matrix,tri);
+    return true;
+}
 
-bool PhongShader::vert_prosess()
+bool PhongShader::fragment_prosess(Triangle& tri,TGAColor& color)
 {
     return true;
 }

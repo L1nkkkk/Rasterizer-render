@@ -19,7 +19,6 @@ public:
     TGAImage& image;
     int width,height;
     std::vector<float> zBuffer;
-    Matrix4f viewport_mat;
     Shader* shader;
     Render(TGAImage& img,shader_type type_)
     : image(img)
@@ -27,21 +26,19 @@ public:
     , height(img.get_height())
     , zBuffer(width * height, std::numeric_limits<float>::lowest())
     {
-        viewport_mat = Matrix4f({
-            Vector4f(width/2.,0,0,width/2.),
-            Vector4f(0,height/2.,0,height/2.),
-            Vector4f(0,0,1,0),
-            Vector4f(0,0,0,1)
-        });
-
         switch (type_)
         {
-        case shader_type::Phong_Shading:
-            shader = new PhongShader();
-            break;
-        
-        default:
-            throw std::runtime_error("Unsupported shader type");
+            case shader_type::Phong_Shading:
+                    shader = new PhongShader(Matrix4f({
+                    Vector4f(width/2.,0,0,width/2.),
+                    Vector4f(0,height/2.,0,height/2.),
+                    Vector4f(0,0,1,0),
+                    Vector4f(0,0,0,1)
+                }));
+                break;
+            
+            default:
+                throw std::runtime_error("Unsupported shader type");
         }
     }
     ~Render() {}

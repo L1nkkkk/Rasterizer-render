@@ -1,18 +1,5 @@
 #include "render.h"
 
-inline static void transVerts(Matrix4f& mat,Triangle& tri)
-{
-    for(auto& vert : tri.v_homogeneous){
-        vert=mat*vert;
-        vert.print();
-        vert[0]=vert[0]/vert[3];
-        vert[1]=vert[1]/vert[3];
-        vert[2]=vert[2]/vert[3];
-        //vert.print();
-    }
-    for(int i=0;i<3;++i) tri.verts_[i]=Vector3f(tri.v_homogeneous[i].x,tri.v_homogeneous[i].y,tri.v_homogeneous[i].z);
-} 
-
 void Render::drawLine(Vector2i& p0,Vector2i& p1,TGAImage& image,TGAColor color)
 {
     int x0,y0,x1,y1;
@@ -119,7 +106,6 @@ void Render::drawModel(Model* model)
 void Render::drawTriangle(Triangle& triangle)
 {
     int maxidx = zBuffer.size();
-    transVerts(viewport_mat,triangle);
     int minx=std::min(triangle[0].x,std::min(triangle[1].x,triangle[2].x));
     int maxx=std::max(triangle[0].x,std::max(triangle[1].x,triangle[2].x));
     int miny=std::min(triangle[0].y,std::min(triangle[1].y,triangle[2].y));
@@ -162,7 +148,7 @@ void Render::renderScene(Scene& scene)
             trans_matrix = trans_matrix*getModelMatrix(model);
             for(auto& face : model->faces_)
             {
-                transVerts(trans_matrix,face);
+                shader->vert_prosess(trans_matrix,face);
                 drawTriangle(face);
             }
         }
